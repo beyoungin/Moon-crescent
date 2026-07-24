@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Hisab Ephemeris Full Input</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <header class="main-header">
+      <div class="header-badge"><i class="fa-solid fa-calculator"></i> Full Ephemeris Engine</div>
+      <h1>KALKULATOR HISAB AWAL RAMADHAN</h1>
+      <p>Masukkan Data Geografis & Data Ephemeris untuk Menghitung Hasil Hisab Otomatis</p>
+    </header>
+
+    <div class="main-layout">
+      
+      <!-- FORM INPUT DATA GEOGRAFIS & EPHEMERIS -->
+      <section class="card input-section">
+        <div class="card-title">
+          <i class="fa-solid fa-sliders"></i>
+          <h2>DATA INPUT MANUAL</h2>
+        </div>
+
+        <form id="hisabForm" oninput="hitungOtomatis()">
+          
+          <!-- GEOGRAFIS -->
+          <div class="section-divider">1. Data Geografis Tempat</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Lintang Tempat (DMS)</label>
+              <div class="dms-group">
+                <input type="number" id="latDeg" value="-6">
+                <input type="number" id="latMin" value="59">
+                <input type="number" id="latSec" value="30">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Bujur Tempat (DMS)</label>
+              <div class="dms-group">
+                <input type="number" id="lonDeg" value="110">
+                <input type="number" id="lonMin" value="20">
+                <input type="number" id="lonSec" value="53">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ketinggian Tempat (mdpl)</label>
+              <input type="number" id="inputTinggi" value="109">
+            </div>
+            <div class="form-group">
+              <label>Time Zone (Jam)</label>
+              <input type="number" id="inputTZ" value="7">
+            </div>
+          </div>
+
+          <!-- EPHEMERIS IJTMA (ELM & ALB) -->
+          <div class="section-divider">2. Data Ephemeris Ijtima' (ELM & ALB)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ELM Jam 9 (DMS)</label>
+              <div class="dms-group"><input id="elm9d" value="350"><input id="elm9m" value="17"><input id="elm9s" value="8"></div>
+            </div>
+            <div class="form-group">
+              <label>ELM Jam 10 (DMS)</label>
+              <div class="dms-group"><input id="elm10d" value="350"><input id="elm10m" value="19"><input id="elm10s" value="37"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ALB Jam 9 (DMS)</label>
+              <div class="dms-group"><input id="alb9d" value="350"><input id="alb9m" value="15"><input id="alb9s" value="32"></div>
+            </div>
+            <div class="form-group">
+              <label>ALB Jam 10 (DMS)</label>
+              <div class="dms-group"><input id="alb10d" value="350"><input id="alb10m" value="53"><input id="alb10s" value="41"></div>
+            </div>
+          </div>
+
+          <!-- EPHEMERIS MATAHARI GHURUB -->
+          <div class="section-divider">3. Data Ephemeris Matahari</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>DEKM Jam 0</label>
+              <div class="dms-group"><input id="dekm0d" value="-3"><input id="dekm0m" value="50"><input id="dekm0s" value="6"></div>
+            </div>
+            <div class="form-group">
+              <label>DEKM Jam 1</label>
+              <div class="dms-group"><input id="dekm1d" value="-3"><input id="dekm1m" value="49"><input id="dekm1s" value="7"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>EoT Jam 0</label>
+              <div class="dms-group"><input id="eot0d" value="0"><input id="eot0m" value="-10"><input id="eot0s" value="-8"></div>
+            </div>
+            <div class="form-group">
+              <label>EoT Jam 1</label>
+              <div class="dms-group"><input id="eot1d" value="0"><input id="eot1m" value="-10"><input id="eot1s" value="-7"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>SDM Jam 0</label>
+              <div class="dms-group"><input id="sdm0d" value="0"><input id="sdm0m" value="16"><input id="sdm0s" value="6.14"></div>
+            </div>
+            <div class="form-group">
+              <label>SDM Jam 1</label>
+              <div class="dms-group"><input id="sdm1d" value="0"><input id="sdm1m" value="16"><input id="sdm1s" value="6.13"></div>
+            </div>
+          </div>
+
+          <!-- EPHEMERIS BULAN GHURUB -->
+          <div class="section-divider">4. Data Ephemeris Bulan (Jam -1 & 0)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>ARM Jam -1 / Jam 0</label>
+              <div class="dms-group"><input id="arm_1" value="351.105556"><input id="arm0" value="351.143889"></div>
+            </div>
+            <div class="form-group">
+              <label>ARB Jam -1 / Jam 0</label>
+              <div class="dms-group"><input id="arb_1" value="352.506667"><input id="arb0" value="353.071667"></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>DEKB Jam -1 / Jam 0</label>
+              <div class="dms-group"><input id="dekb_1" value="-5.635556"><input id="dekb0" value="-5.336111"></div>
+            </div>
+            <div class="form-group">
+              <label>HPB Jam -1 / Jam 0</label>
+              <div class="dms-group"><input id="hpb_1" value="1.023889"><input id="hpb0" value="1.023889"></div>
+            </div>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- HASIL KALKULASI RUMUS OTOMATIS -->
+      <section class="results-section">
+        
+        <!-- RINGKASAN UTAMA -->
+        <div class="results-cards">
+          <div class="card res-card">
+            <span class="label">Waktu Ijtima'</span>
+            <div class="val" id="resIjtima">16 : 01 : 27.51</div>
+          </div>
+          <div class="card res-card">
+            <span class="label">Terbenam Matahari (Ghurub)</span>
+            <div class="val" id="resSunset">17 : 55 : 14.69</div>
+          </div>
+          <div class="card res-card green">
+            <span class="label">Tinggi Hilal Hakiki</span>
+            <div class="val" id="resTinggiHakiki">00° 54' 17.19"</div>
+          </div>
+          <div class="card res-card">
+            <span class="label">Muksul Hilal (Lama Hilal)</span>
+            <div class="val" id="resMukul">00 : 04 : 12.39</div>
+          </div>
+        </div>
+
+        <!-- TABEL RUMUS OTOMATIS -->
+        <div class="card table-card">
+          <div class="card-title">
+            <i class="fa-solid fa-square-root-variable"></i>
+            <h2>HASIL PERHITUNGAN RUMUS OTOMATIS</h2>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Unsur Falak</th>
+                <th>Desimal</th>
+                <th>Format HMS / DMS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>DIP (Kerendahan Ufuk)</strong></td>
+                <td id="rDipDes">0.3059°</td>
+                <td id="rDipDms">00° 18' 21.24"</td>
+              </tr>
+              <tr>
+                <td><strong>Azimut Matahari</strong></td>
+                <td id="rAzSunDes">266.009°</td>
+                <td id="rAzSunDms">266° 00' 33.69"</td>
+              </tr>
+              <tr>
+                <td><strong>Azimut Hilal</strong></td>
+                <td id="rAzMoonDes">264.711°</td>
+                <td id="rAzMoonDms">264° 42' 38.38"</td>
+              </tr>
+              <tr>
+                <td><strong>Posisi Hilal</strong></td>
+                <td id="rPosDes">-1.299°</td>
+                <td id="rPosDms">-01° 17' 55.31"</td>
+              </tr>
+              <tr>
+                <td><strong>Tinggi Hilal Mar'i (Center)</strong></td>
+                <td id="rMariCenterDes">0.647°</td>
+                <td id="rMariCenterDms">00° 38' 50.08"</td>
+              </tr>
+              <tr>
+                <td><strong>Tinggi Hilal Mar'i (Upper)</strong></td>
+                <td id="rMariUpperDes">0.926°</td>
+                <td id="rMariUpperDms">00° 55' 34.57"</td>
+              </tr>
+              <tr>
+                <td><strong>Iluminasi Hilal (FIB)</strong></td>
+                <td id="rFibDes">0.00046</td>
+                <td id="rFibPct">0.05%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
