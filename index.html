@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kalkulator Hisab Ephemeris Full Input</title>
+  <title>Sistem Hisab Awal Bulan Kamariah Otomatis (NASA JPL)</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -13,208 +14,222 @@
 <body>
 
   <div class="container">
+    <!-- HEADER -->
     <header class="main-header">
-      <div class="header-badge"><i class="fa-solid fa-calculator"></i> Full Ephemeris Engine</div>
-      <h1>KALKULATOR HISAB AWAL RAMADHAN</h1>
-      <p>Masukkan Data Geografis & Data Ephemeris untuk Menghitung Hasil Hisab Otomatis</p>
+      <div class="header-badge">
+        <i class="fa-solid fa-moon"></i> Full Automated Hisab Engine (Ephemeris NASA JPL)
+      </div>
+      <h1>SISTEM HISAB AWAL BULAN KAMARIAH</h1>
+      <p>Perhitungan Otomatis Posisi Hilal Berdasarkan Algoritma Ephemeris Kemenag & API NASA JPL</p>
     </header>
 
     <div class="main-layout">
       
-      <!-- FORM INPUT DATA GEOGRAFIS & EPHEMERIS -->
+      <!-- FORM INPUT PARAMETER UTAMA -->
       <section class="card input-section">
         <div class="card-title">
           <i class="fa-solid fa-sliders"></i>
-          <h2>DATA INPUT MANUAL</h2>
+          <h2>INPUT PARAMETER PENETAPAN</h2>
         </div>
 
-        <form id="hisabForm" oninput="hitungOtomatis()">
+        <form id="hisabForm" onsubmit="hitungHisabOtomatis(event)">
           
-          <!-- GEOGRAFIS -->
-          <div class="section-divider">1. Data Geografis Tempat</div>
+          <!-- 1. BULAN & TAHUN HIJRIAH -->
+          <div class="section-divider">1. Menentukan Bulan & Tahun Hijriah</div>
           <div class="form-row">
             <div class="form-group">
-              <label>Lintang Tempat (DMS)</label>
+  <label for="bulanHijriah">Menjelang Awal Bulan</label>
+  <select id="bulanHijriah">
+    <option value="1">1. Muharram (29 Zulhijjah)</option>
+    <option value="2">2. Safar (29 Muharram)</option>
+    <option value="3">3. Rabi'ul Awal (29 Safar)</option>
+    <option value="4">4. Rabi'ul Akhir (29 Rabi'ul Awal)</option>
+    <option value="5">5. Jumadil Awal (29 Rabi'ul Akhir)</option>
+    <option value="6">6. Jumadil Akhir (29 Jumadil Awal)</option>
+    <option value="7">7. Rajab (29 Jumadil Akhir)</option>
+    <option value="8">8. Sya'ban (29 Rajab)</option>
+    <option value="9" selected>9. Ramadan (29 Sya'ban)</option>
+    <option value="10">10. Syawal (29 Ramadan)</option>
+    <option value="11">11. Zulkaidah (29 Syawal)</option>
+    <option value="12">12. Zulhijjah (29 Zulkaidah)</option>
+  </select>
+</div>
+            <div class="form-group">
+              <label for="tahunHijriah">Tahun Hijriah (H)</label>
+              <input type="number" id="tahunHijriah" value="1447" min="1" max="2000">
+            </div>
+          </div>
+
+          <!-- 2. LOKASI GEOGRAFIS -->
+          <div class="section-divider">2. Menentukan Lokasi Geografis (POB)</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Lintang Tempat / φ (DMS)</label>
               <div class="dms-group">
-                <input type="number" id="latDeg" value="-6">
-                <input type="number" id="latMin" value="59">
-                <input type="number" id="latSec" value="30">
+                <input type="number" id="latDeg" value="-7" placeholder="Deg">
+                <input type="number" id="latMin" value="4" placeholder="Min">
+                <input type="number" id="latSec" value="26" placeholder="Sec">
               </div>
             </div>
             <div class="form-group">
-              <label>Bujur Tempat (DMS)</label>
+              <label>Bujur Tempat / λ (DMS)</label>
               <div class="dms-group">
-                <input type="number" id="lonDeg" value="110">
-                <input type="number" id="lonMin" value="20">
-                <input type="number" id="lonSec" value="53">
+                <input type="number" id="lonDeg" value="106" placeholder="Deg">
+                <input type="number" id="lonMin" value="31" placeholder="Min">
+                <input type="number" id="lonSec" value="52" placeholder="Sec">
               </div>
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Ketinggian Tempat (mdpl)</label>
-              <input type="number" id="inputTinggi" value="109">
+              <label for="inputTinggi">Tinggi Tempat / Tt (Meter)</label>
+              <input type="number" id="inputTinggi" value="137">
             </div>
             <div class="form-group">
-              <label>Time Zone (Jam)</label>
+              <label for="inputTZ">Zona Waktu / WIB (Jam)</label>
               <input type="number" id="inputTZ" value="7">
             </div>
           </div>
 
-          <!-- EPHEMERIS IJTMA (ELM & ALB) -->
-          <div class="section-divider">2. Data Ephemeris Ijtima' (ELM & ALB)</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>ELM Jam 9 (DMS)</label>
-              <div class="dms-group"><input id="elm9d" value="350"><input id="elm9m" value="17"><input id="elm9s" value="8"></div>
-            </div>
-            <div class="form-group">
-              <label>ELM Jam 10 (DMS)</label>
-              <div class="dms-group"><input id="elm10d" value="350"><input id="elm10m" value="19"><input id="elm10s" value="37"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>ALB Jam 9 (DMS)</label>
-              <div class="dms-group"><input id="alb9d" value="350"><input id="alb9m" value="15"><input id="alb9s" value="32"></div>
-            </div>
-            <div class="form-group">
-              <label>ALB Jam 10 (DMS)</label>
-              <div class="dms-group"><input id="alb10d" value="350"><input id="alb10m" value="53"><input id="alb10s" value="41"></div>
-            </div>
-          </div>
-
-          <!-- EPHEMERIS MATAHARI GHURUB -->
-          <div class="section-divider">3. Data Ephemeris Matahari</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>DEKM Jam 0</label>
-              <div class="dms-group"><input id="dekm0d" value="-3"><input id="dekm0m" value="50"><input id="dekm0s" value="6"></div>
-            </div>
-            <div class="form-group">
-              <label>DEKM Jam 1</label>
-              <div class="dms-group"><input id="dekm1d" value="-3"><input id="dekm1m" value="49"><input id="dekm1s" value="7"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>EoT Jam 0</label>
-              <div class="dms-group"><input id="eot0d" value="0"><input id="eot0m" value="-10"><input id="eot0s" value="-8"></div>
-            </div>
-            <div class="form-group">
-              <label>EoT Jam 1</label>
-              <div class="dms-group"><input id="eot1d" value="0"><input id="eot1m" value="-10"><input id="eot1s" value="-7"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>SDM Jam 0</label>
-              <div class="dms-group"><input id="sdm0d" value="0"><input id="sdm0m" value="16"><input id="sdm0s" value="6.14"></div>
-            </div>
-            <div class="form-group">
-              <label>SDM Jam 1</label>
-              <div class="dms-group"><input id="sdm1d" value="0"><input id="sdm1m" value="16"><input id="sdm1s" value="6.13"></div>
-            </div>
-          </div>
-
-          <!-- EPHEMERIS BULAN GHURUB -->
-          <div class="section-divider">4. Data Ephemeris Bulan (Jam -1 & 0)</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>ARM Jam -1 / Jam 0</label>
-              <div class="dms-group"><input id="arm_1" value="351.105556"><input id="arm0" value="351.143889"></div>
-            </div>
-            <div class="form-group">
-              <label>ARB Jam -1 / Jam 0</label>
-              <div class="dms-group"><input id="arb_1" value="352.506667"><input id="arb0" value="353.071667"></div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>DEKB Jam -1 / Jam 0</label>
-              <div class="dms-group"><input id="dekb_1" value="-5.635556"><input id="dekb0" value="-5.336111"></div>
-            </div>
-            <div class="form-group">
-              <label>HPB Jam -1 / Jam 0</label>
-              <div class="dms-group"><input id="hpb_1" value="1.023889"><input id="hpb0" value="1.023889"></div>
-            </div>
-          </div>
-
+          <button type="submit" class="btn-hit" id="btnHitung">
+            <i class="fa-solid fa-calculator"></i> HITUNG HISAB OTOMATIS
+          </button>
+          
+          <small class="status-msg" id="statusMsg">Klik tombol untuk memulai konversi & penarikan data NASA JPL.</small>
         </form>
       </section>
 
-      <!-- HASIL KALKULASI RUMUS OTOMATIS -->
+      <!-- HASIL KALKULASI HISAB -->
       <section class="results-section">
         
-        <!-- RINGKASAN UTAMA -->
+        <!-- HASIL RINGKASAN UTAMA -->
         <div class="results-cards">
           <div class="card res-card">
-            <span class="label">Waktu Ijtima'</span>
-            <div class="val" id="resIjtima">16 : 01 : 27.51</div>
+            <span class="label">Konversi Tanggal Rukyat</span>
+            <div class="val" id="resMasehi">17 Februari 2026 M</div>
+            <span class="sub-val" id="resHariPasaran">Selasa Kliwon</span>
+          </div>
+          <div class="card res-card highlight">
+            <span class="label">Waktu Ijtima' (Konjungsi)</span>
+            <div class="val" id="resIjtima">19 : 01 : 01 WIB</div>
+            <span class="sub-val" id="resIjtimaKet">Selasa, 17 Feb 2026</span>
           </div>
           <div class="card res-card">
-            <span class="label">Terbenam Matahari (Ghurub)</span>
-            <div class="val" id="resSunset">17 : 55 : 14.69</div>
+            <span class="label">Matahari Terbenam (Ghurub)</span>
+            <div class="val" id="resSunset">18 : 18 : 42 WIB</div>
+            <span class="sub-val" id="resAzimuthSun">Az: 257° 51' 46"</span>
           </div>
-          <div class="card res-card green">
-            <span class="label">Tinggi Hilal Hakiki</span>
-            <div class="val" id="resTinggiHakiki">00° 54' 17.19"</div>
-          </div>
-          <div class="card res-card">
-            <span class="label">Muksul Hilal (Lama Hilal)</span>
-            <div class="val" id="resMukul">00 : 04 : 12.39</div>
+          <div class="card res-card green" id="cardTinggi">
+            <span class="label">Tinggi Hilal Mar'i (Center)</span>
+            <div class="val" id="resTinggiMari">-01° 05' 08"</div>
+            <span class="badge" id="badgeUfuk">Di Bawah Ufuk</span>
           </div>
         </div>
 
-        <!-- TABEL RUMUS OTOMATIS -->
+        <!-- TABEL RINCIAN HASIL ALGORITMA 42 LANGKAH -->
         <div class="card table-card">
           <div class="card-title">
-            <i class="fa-solid fa-square-root-variable"></i>
-            <h2>HASIL PERHITUNGAN RUMUS OTOMATIS</h2>
+            <i class="fa-solid fa-list-check"></i>
+            <h2>RINCIAN HASIL ALGORITMA HISAB EPHEMERIS</h2>
           </div>
           <table class="data-table">
             <thead>
               <tr>
-                <th>Unsur Falak</th>
-                <th>Desimal</th>
-                <th>Format HMS / DMS</th>
+                <th>Unsur / Parameter Hisab</th>
+                <th>Nilai Perhitungan</th>
+                <th>Keterangan</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>DIP (Kerendahan Ufuk)</strong></td>
-                <td id="rDipDes">0.3059°</td>
-                <td id="rDipDms">00° 18' 21.24"</td>
+                <td><strong>Kerendahan Ufuk (Dip)</strong></td>
+                <td id="rDip">00° 20' 34.61"</td>
+                <td>√Tt × 0.0293°</td>
               </tr>
               <tr>
-                <td><strong>Azimut Matahari</strong></td>
-                <td id="rAzSunDes">266.009°</td>
-                <td id="rAzSunDms">266° 00' 33.69"</td>
+                <td><strong>Deklinasi Matahari (δʘ)</strong></td>
+                <td id="rDekM">-11° 53' 28.50"</td>
+                <td>Saat Ghurub</td>
               </tr>
               <tr>
-                <td><strong>Azimut Hilal</strong></td>
-                <td id="rAzMoonDes">264.711°</td>
-                <td id="rAzMoonDms">264° 42' 38.38"</td>
+                <td><strong>Deklinasi Bulan (δ()</strong></td>
+                <td id="rDekB">-12° 55' 07.38"</td>
+                <td>Saat Ghurub</td>
               </tr>
               <tr>
-                <td><strong>Posisi Hilal</strong></td>
-                <td id="rPosDes">-1.299°</td>
-                <td id="rPosDms">-01° 17' 55.31"</td>
+                <td><strong>Sudut Jam Matahari (tʘ)</strong></td>
+                <td id="rTSun">92° 43' 16.23"</td>
+                <td>Cos tʘ</td>
               </tr>
               <tr>
-                <td><strong>Tinggi Hilal Mar'i (Center)</strong></td>
-                <td id="rMariCenterDes">0.647°</td>
-                <td id="rMariCenterDms">00° 38' 50.08"</td>
+                <td><strong>Sudut Jam Bulan (t()</strong></td>
+                <td id="rTMoon">92° 43' 16.54"</td>
+                <td>ARʘ – AR( + tʘ</td>
               </tr>
               <tr>
-                <td><strong>Tinggi Hilal Mar'i (Upper)</strong></td>
-                <td id="rMariUpperDes">0.926°</td>
-                <td id="rMariUpperDms">00° 55' 34.57"</td>
+                <td><strong>Tinggi Hilal Hakiki (h()</strong></td>
+                <td id="rHHakiki">-01° 03' 13.06"</td>
+                <td>Pusat Bulan</td>
               </tr>
               <tr>
-                <td><strong>Iluminasi Hilal (FIB)</strong></td>
-                <td id="rFibDes">0.00046</td>
-                <td id="rFibPct">0.05%</td>
+                <td><strong>Tinggi Mar'i Tepi Atas (Upper)</strong></td>
+                <td id="rUpper">-00° 49' 36.44"</td>
+                <td>Di Bawah Ufuk</td>
+              </tr>
+              <tr>
+                <td><strong>Tinggi Mar'i Tepi Bawah (Lower)</strong></td>
+                <td id="rLower">-01° 20' 40.54"</td>
+                <td>Di Bawah Ufuk</td>
+              </tr>
+              <tr>
+                <td><strong>Azimut Matahari (Azʘ)</strong></td>
+                <td id="rAzSun">257° 51' 46.24"</td>
+                <td>Dari Utara ke Timur</td>
+              </tr>
+              <tr>
+                <td><strong>Azimut Bulan (Az()</strong></td>
+                <td id="rAzMoon">256° 50' 38.21"</td>
+                <td>Dari Utara ke Timur</td>
+              </tr>
+              <tr>
+                <td><strong>Posisi Hilal (PH)</strong></td>
+                <td id="rPosHilal">-01° 01' 08.03"</td>
+                <td>Selatan Matahari</td>
+              </tr>
+              <tr>
+                <td><strong>Lama Hilal (Lag / Lm()</strong></td>
+                <td id="rLag">-00j 03m 27.15s</td>
+                <td>Bulan Terbenam Duluan</td>
+              </tr>
+              <tr>
+                <td><strong>Waktu Terbenam Bulan</strong></td>
+                <td id="rTerbenamBulan">18 : 15 : 15 WIB</td>
+                <td>Sebelum Sunset</td>
+              </tr>
+              <tr>
+                <td><strong>Elongasi Toposentrik (JBt)</strong></td>
+                <td id="rElongasiTopo">01° 02' 49.18"</td>
+                <td>Sudut Pisah</td>
+              </tr>
+              <tr>
+                <td><strong>Fraksi Iluminasi (FIB)</strong></td>
+                <td id="rFib">0.01%</td>
+                <td>Cahaya Hilal</td>
+              </tr>
+              <tr>
+                <td><strong>Nurul Hilal (NH)</strong></td>
+                <td id="rNh">0.0875 Jari</td>
+                <td>Lebar Sabit</td>
+              </tr>
+              <tr>
+                <td><strong>Keadaan Hilal</strong></td>
+                <td id="rKeadaan">Telungkup, Miring ke Utara</td>
+                <td>MRG: 50° 56' 32"</td>
+              </tr>
+              <tr>
+                <td><strong>Umur Hilal</strong></td>
+                <td id="rUmurHilal">-00 jam 42 menit</td>
+                <td>Ijtimak setelah Sunset</td>
               </tr>
             </tbody>
           </table>
