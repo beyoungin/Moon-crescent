@@ -173,7 +173,7 @@ input:focus, select:focus {
 }
 
 .res-card.green {
-  border-left-color: #ef4444; /* Default Merah jika di bawah ufuk */
+  border-left-color: #ef4444;
 }
 
 .res-card .label {
