@@ -51,6 +51,7 @@ function konversiHijriahKeMasehi(bulanTarget, tahunHijriah) {
     "Juli", "Agustus", "September", "Oktober", "November", "Desember"
   ];
 
+  // Rukyat dilakukan tanggal 29 bulan sebelumnya
   const akumulasiHariBulan = [354, 29, 59, 89, 118, 148, 177, 207, 236, 266, 295, 325];
 
   let bulanRukyatIdx = bulanTarget - 1;
@@ -93,23 +94,23 @@ function konversiHijriahKeMasehi(bulanTarget, tahunHijriah) {
 }
 
 // ==========================================
-// 3. MAIN CONTROLLER & HISAB MANUAL
+// 3. CONTROLLER & HISAB MANUAL EPHEMERIS
 // ==========================================
 
-function hitungHisabOtomatis(e) {
+function hitungHisabManual(e) {
   if (e) e.preventDefault();
 
   let statusEl = document.getElementById('statusMsg');
   statusEl.innerText = "⏳ Memproses Perhitungan Hisab Manual...";
   statusEl.style.color = "#38bdf8";
 
-  // 1. INPUT PARAMETER GEOGRAFIS
+  // A. LOKASI GEOGRAFIS (POB)
   let lat = dmsToDec(getNum('latDeg'), getNum('latMin'), getNum('latSec'));
   let lon = dmsToDec(getNum('lonDeg'), getNum('lonMin'), getNum('lonSec'));
   let tinggi = getNum('inputTinggi');
   let tz = getNum('inputTZ');
 
-  // 2. KONVERSI KALENDER
+  // B. KONVERSI TANGGAL HIJRIAH
   let bulanH = parseInt(document.getElementById('bulanHijriah').value);
   let tahunH = parseInt(document.getElementById('tahunHijriah').value);
 
@@ -118,35 +119,28 @@ function hitungHisabOtomatis(e) {
   setTxt('resHariPasaran', masehiObj.hariPasaran);
   setTxt('resIjtimaKet', masehiObj.hariPasaran + ", " + masehiObj.tglFormatted);
 
-  // 3. BACA DATA EPHEMERIS INPUT MANUAL
-  // (Jika ID input manual belum ada di HTML, sistem menggunakan variabel sandaran default)
+  // C. DATA EPHEMERIS MATAHARI & BULAN DARI FORM INPUT
   let dataFalak = {
-    elm11: getNum('elm11') || (328 + 47/60 + 10/3600),
-    elm12: getNum('elm12') || (328 + 49/60 + 41/3600),
-    alb11: getNum('alb11') || (328 + 16/60 + 15/3600),
-    alb12: getNum('alb12') || (328 + 49/60 + 10/3600),
-    dekm11: getNum('dekm11') || -(11 + 53/60 + 45/3600),
-    dekm12: getNum('dekm12') || -(11 + 52/60 + 53/3600),
-    arSun11: getNum('arSun11') || (330 + 55/60 + 40/3600),
-    arSun12: getNum('arSun12') || (330 + 58/60 + 6/3600),
-    arMoon11: getNum('arMoon11') || (330 + 46/60 + 53/3600),
-    arMoon12: getNum('arMoon12') || (331 + 17/60 + 28/3600),
-    dekMoon11: getNum('dekMoon11') || -(12 + 59/60 + 34/3600),
-    dekMoon12: getNum('dekMoon12') || -(12 + 45/60 + 19/3600),
-    eot11: getNum('eot11') || -(13/60 + 57/3600),
-    eot12: getNum('eot12') || -(13/60 + 57/3600),
-    sdm11: getNum('sdm11') || (16/60 + 11.09/3600),
-    sdMoon11: getNum('sdMoon11') || (15/60 + 31.93/3600),
-    sdMoon12: getNum('sdMoon12') || (15/60 + 32.32/3600),
-    hpMoon11: getNum('hpMoon11') || (57/60),
-    hpMoon12: getNum('hpMoon12') || (57/60 + 2/3600)
+    elm11: getNum('elm11'),
+    elm12: getNum('elm12'),
+    alb11: getNum('alb11'),
+    alb12: getNum('alb12'),
+    dekm11: getNum('dekm11'),
+    dekm12: getNum('dekm12'),
+    arSun11: getNum('arSun11'),
+    arMoon11: getNum('arMoon11'),
+    dekMoon11: getNum('dekMoon11'),
+    dekMoon12: getNum('dekMoon12'),
+    eot11: getNum('eot11'),
+    sdMoon11: getNum('sdMoon11'),
+    hpMoon11: getNum('hpMoon11')
   };
 
   // ==========================================
   // 4. EKSEKUSI ALGORITMA HISAB 42 LANGKAH
   // ==========================================
 
-  // A. IJTIMA'
+  // 1. IJTIMA'
   let b1 = dataFalak.elm12 - dataFalak.elm11;
   let b2 = dataFalak.alb12 - dataFalak.alb11;
   let mb = dataFalak.elm11 - dataFalak.alb11;
@@ -158,11 +152,11 @@ function hitungHisabOtomatis(e) {
 
   setTxt('resIjtima', decToHMS(ijtimaWib) + " WIB");
 
-  // B. DIP / KERENDAHAN UFUK
+  // 2. DIP / KERENDAHAN UFUK
   let dip = Math.sqrt(tinggi) * 0.0293;
   setTxt('rDip', decToDMS(dip));
 
-  // C. ESTIMASI GHURUB MATAHARI
+  // 3. ESTIMASI GHURUB MATAHARI
   let hSunEst = -(16/60 + 34.5/60 + dip);
   let radLat = toRad(lat);
   let radDekSun11 = toRad(dataFalak.dekm11);
@@ -171,17 +165,16 @@ function hitungHisabOtomatis(e) {
   let cosTSunEst = (-Math.tan(radLat) * Math.tan(radDekSun11)) + (Math.sin(radHSunEst) / (Math.cos(radLat) * Math.cos(radDekSun11)));
   let tSunEst = toDeg(Math.acos(Math.max(-1, Math.min(1, cosTSunEst))));
 
-  let ghurubUtEst = (12 - dataFalak.eot11) + (tSunEst / 15) - (lon / 15);
+  let ghurubUtEst = (12 - (dataFalak.eot11 / 60)) + (tSunEst / 15) - (lon / 15);
 
-  // D. INTERPOLASI SAAT GHURUB
+  // 4. INTERPOLASI SAAT GHURUB
   let factor = ghurubUtEst - 11;
   let dekSunGhurub = dataFalak.dekm11 + (dataFalak.dekm12 - dataFalak.dekm11) * factor;
-  let sdSunGhurub = dataFalak.sdm11;
-  let eotGhurub = dataFalak.eot11;
+  let sdSunGhurub = 16 / 60;
 
   setTxt('rDekM', decToDMS(dekSunGhurub));
 
-  // E. TINGGI & GHURUB PRESISI
+  // 5. TINGGI & GHURUB MATAHARI PRESISI
   let hSunPrecision = -(sdSunGhurub + 34.5/60 + dip);
   let radDekSunPrecision = toRad(dekSunGhurub);
   let radHSunPrecision = toRad(hSunPrecision);
@@ -189,22 +182,22 @@ function hitungHisabOtomatis(e) {
   let cosTSunPrec = (-Math.tan(radLat) * Math.tan(radDekSunPrecision)) + (Math.sin(radHSunPrecision) / (Math.cos(radLat) * Math.cos(radDekSunPrecision)));
   let tSunPrec = toDeg(Math.acos(Math.max(-1, Math.min(1, cosTSunPrec))));
 
-  let ghurubUtPrec = (12 - eotGhurub) + (tSunPrec / 15) - (lon / 15);
+  let ghurubUtPrec = (12 - (dataFalak.eot11 / 60)) + (tSunPrec / 15) - (lon / 15);
   let ghurubWibPrec = ghurubUtPrec + tz;
 
   setTxt('resSunset', decToHMS(ghurubWibPrec) + " WIB");
 
-  // F. INTERPOLASI BULAN
+  // 6. INTERPOLASI BULAN SAAT GHURUB
   let factorPrec = ghurubUtPrec - 11;
-  let arSunGhurub = dataFalak.arSun11 + (dataFalak.arSun12 - dataFalak.arSun11) * factorPrec;
-  let arMoonGhurub = dataFalak.arMoon11 + (dataFalak.arMoon12 - dataFalak.arMoon11) * factorPrec;
+  let arSunGhurub = dataFalak.arSun11;
+  let arMoonGhurub = dataFalak.arMoon11;
   let dekMoonGhurub = dataFalak.dekMoon11 + (dataFalak.dekMoon12 - dataFalak.dekMoon11) * factorPrec;
-  let sdMoonGhurub = dataFalak.sdMoon11 + (dataFalak.sdMoon12 - dataFalak.sdMoon11) * factorPrec;
-  let hpMoonGhurub = dataFalak.hpMoon11 + (dataFalak.hpMoon12 - dataFalak.hpMoon11) * factorPrec;
+  let sdMoonGhurub = dataFalak.sdMoon11;
+  let hpMoonGhurub = dataFalak.hpMoon11;
 
   setTxt('rDekB', decToDMS(dekMoonGhurub));
 
-  // G. TINGGI HILAL HAKIKI
+  // 7. TINGGI HILAL HAKIKI
   let tMoon = arSunGhurub - arMoonGhurub + tSunPrec;
   setTxt('rTSun', decToDMS(tSunPrec));
   setTxt('rTMoon', decToDMS(tMoon));
@@ -216,7 +209,7 @@ function hitungHisabOtomatis(e) {
 
   setTxt('rHHakiki', decToDMS(hHilalHakiki));
 
-  // H. PARALAKS & TINGGI MAR'I
+  // 8. PARALAKS & TINGGI MAR'I
   let paralaksMoon = Math.cos(toRad(hHilalHakiki)) * hpMoonGhurub;
   let hMoonApparentNoRef = hHilalHakiki - paralaksMoon + sdMoonGhurub;
   let refraksi = 34.5 / 60;
@@ -247,7 +240,7 @@ function hitungHisabOtomatis(e) {
     if (cardTinggi) cardTinggi.style.borderLeftColor = "#ef4444";
   }
 
-  // I. AZIMUT
+  // 9. AZIMUT MATAHARI & BULAN
   let tanASun = -Math.sin(radLat) / Math.tan(toRad(tSunPrec)) + Math.cos(radLat) * Math.tan(radDekSunPrecision) / Math.sin(toRad(tSunPrec));
   let aSun = toDeg(Math.atan(tanASun));
   let azSun = 270 + aSun;
@@ -263,7 +256,7 @@ function hitungHisabOtomatis(e) {
   setTxt('rAzMoon', decToDMS(azMoon));
   setTxt('rPosHilal', decToDMS(posHilal));
 
-  // J. LAMA HILAL
+  // 10. LAMA HILAL
   let nf = toDeg(Math.asin(Math.max(-1, Math.min(1, (Math.sin(radLat) * Math.sin(radDekMoon)) / (Math.cos(radLat) * Math.cos(radDekMoon))))));
   let pnf = Math.cos(toRad(nf)) * hpMoonGhurub;
   let sbs = 90 + nf - pnf + (sdMoonGhurub + (0.575/60) + dip);
@@ -274,7 +267,7 @@ function hitungHisabOtomatis(e) {
   setTxt('rLag', decToHMS(lagHour));
   setTxt('rTerbenamBulan', decToHMS(terbenamBulanWib) + " WIB");
 
-  // K. KONDISI FISIK HILAL
+  // 11. KONDISI FISIK HILAL
   let fib = 0.01;
   let nh = Math.sqrt(Math.pow(posHilal, 2) + Math.pow(hMariUpper, 2)) / 15;
   let elongasiTopo = toDeg(Math.acos(Math.max(-1, Math.min(1, Math.cos(toRad(hMariCenter + sdSunGhurub + 34.5/60)) * Math.cos(toRad(posHilal))))));
@@ -286,8 +279,8 @@ function hitungHisabOtomatis(e) {
   setTxt('rKeadaan', posHilal >= 0 ? "Miring ke Utara" : "Miring ke Selatan");
   setTxt('rUmurHilal', `${Math.floor(umurHilalHour)} jam ${Math.abs(Math.round((umurHilalHour % 1)*60))} menit`);
 
-  statusEl.innerText = "✓ BERHASIL! Perhitungan Hisab Manual Selesai.";
+  statusEl.innerText = "✓ BERHASIL! Perhitungan Hisab Ephemeris Selesai.";
   statusEl.style.color = "#34d399";
 }
 
-window.onload = () => hitungHisabOtomatis(null);
+window.onload = () => hitungHisabManual(null);
