@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalkulator Hisab Hilal - Ephemeris Kemenag</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="p-2 bg-emerald-500/10 rounded-lg text-emerald-400">
+          <i data-lucide="moon" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-white">Hisab Ephemeris Kemenag</h1>
+          <p class="text-xs text-slate-400">Kalkulator Awal Bulan Hijriah & Posisi Hilal</p>
+        </div>
+      </div>
+      <span class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full border border-emerald-500/30">
+        Kemenag Standard
+      </span>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Input Form Section -->
+    <section class="lg:col-span-5 space-y-6">
+      <form id="hisabForm" class="bg-slate-800/50 border border-slate-700/60 rounded-xl p-6 shadow-xl space-y-6">
+        
+        <!-- Header Section -->
+        <div class="border-b border-slate-700 pb-4">
+          <h2 class="text-lg font-semibold text-emerald-400 flex items-center gap-2">
+            <i data-lucide="sliders" class="w-5 h-5"></i> Parameter Perhitungan
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Masukkan data lokasi dan data Ephemeris dari Kemenag.</p>
+        </div>
+
+        <!-- Lokasi POB -->
+        <div class="space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-l-2 border-emerald-500 pl-2">
+            1. Data Lokasi Pengamatan (POB)
+          </h3>
+          
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Lintang (°)</label>
+              <input type="number" id="phi_deg" value="-7" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Menit (')</label>
+              <input type="number" id="phi_min" value="4" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Detik (")</label>
+              <input type="number" step="0.01" id="phi_sec" value="26" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Bujur (°)</label>
+              <input type="number" id="lambda_deg" value="106" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Menit (')</label>
+              <input type="number" id="lambda_min" value="31" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Detik (")</label>
+              <input type="number" step="0.01" id="lambda_sec" value="52" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Tinggi Tempat (m)</label>
+              <input type="number" id="height" value="137" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Koreksi WIB (Jam)</label>
+              <input type="number" id="timezone" value="7" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Ephemeris Ijtima & Ghurub -->
+        <div class="space-y-4">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 border-l-2 border-emerald-500 pl-2">
+            2. Data Ephemeris (Jam UT)
+          </h3>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Jam Awal Ephemeris (Mencari FIB terkecil)</label>
+              <input type="number" id="ut_base" value="11" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white focus:border-emerald-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Selisih B1 (Matahari) (DMS)</label>
+              <input type="text" id="b1_str" value="00:02:31" placeholder="HH:MM:SS" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white focus:border-emerald-500 outline-none">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs text-slate-400 mb-1">Selisih B2 (Bulan) (DMS)</label>
+            <input type="text" id="b2_str" value="00:32:55" placeholder="HH:MM:SS" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white focus:border-emerald-500 outline-none">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Deklinasi ☉ Jam 11 (° ' ")</label>
+              <input type="text" id="dec_sun_11" value="-11:53:45" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Deklinasi ☉ Jam 12 (° ' ")</label>
+              <input type="text" id="dec_sun_12" value="-11:52:53" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Eq. of Time Jam 11 (H:M:S)</label>
+              <input type="text" id="e_sun_11" value="-00:13:57" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">SD Matahari Jam 11 (° ' ")</label>
+              <input type="text" id="sd_sun_11" value="00:16:11.09" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">AR Matahari Jam 11 (° ' ")</label>
+              <input type="text" id="ar_sun_11" value="330:55:40" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">AR Matahari Jam 12 (° ' ")</label>
+              <input type="text" id="ar_sun_12" value="330:58:06" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">AR Bulan Jam 11 (° ' ")</label>
+              <input type="text" id="ar_moon_11" value="330:46:53" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">AR Bulan Jam 12 (° ' ")</label>
+              <input type="text" id="ar_moon_12" value="331:17:28" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Deklinasi Bulan Jam 11 (° ' ")</label>
+              <input type="text" id="dec_moon_11" value="-12:59:34" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Deklinasi Bulan Jam 12 (° ' ")</label>
+              <input type="text" id="dec_moon_12" value="-12:45:19" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">SD Bulan Jam 11 (° ' ")</label>
+              <input type="text" id="sd_moon_11" value="00:15:31.93" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">HP Bulan Jam 11 (° ' ")</label>
+              <input type="text" id="hp_moon_11" value="00:57:00" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm font-mono text-white outline-none">
+            </div>
+          </div>
+        </div>
+
+        <button type="button" onclick="calculateHisab()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-lg shadow-lg shadow-emerald-900/40 transition-all flex items-center justify-center gap-2">
+          <i data-lucide="calculator" class="w-5 h-5"></i> Hitung Awal Bulan
+        </button>
+      </form>
+    </section>
+
+    <!-- Result Display Section -->
+    <section class="lg:col-span-7 space-y-6">
+      
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 text-emerald-500/10">
+            <i data-lucide="clock" class="w-24 h-24"></i>
+          </div>
+          <span class="text-xs text-emerald-400 font-semibold tracking-wide uppercase">Waktu Ijtima'</span>
+          <div id="res_ijtimak" class="text-2xl font-bold text-white mt-1 font-mono">--:--:-- WIB</div>
+          <p class="text-xs text-slate-400 mt-2">Waktu Konjungsi Geogentrik</p>
+        </div>
+
+        <div class="bg-slate-800/80 border border-slate-700/80 rounded-xl p-5 relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 text-emerald-500/10">
+            <i data-lucide="sunset" class="w-24 h-24"></i>
+          </div>
+          <span class="text-xs text-emerald-400 font-semibold tracking-wide uppercase">Matahari Terbenam</span>
+          <div id="res_ghurub" class="text-2xl font-bold text-white mt-1 font-mono">--:--:-- WIB</div>
+          <p class="text-xs text-slate-400 mt-2">Waktu Sunset di Lokasi POB</p>
+        </div>
+      </div>
+
+      <!-- Main Results Table -->
+      <div class="bg-slate-800/50 border border-slate-700/60 rounded-xl p-6 shadow-xl space-y-4">
+        <h3 class="text-md font-semibold text-white flex items-center gap-2 border-b border-slate-700 pb-3">
+          <i data-lucide="file-text" class="w-5 h-5 text-emerald-400"></i> Hasil Perhitungan Hilal Saat Ghurub
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Tinggi Hilal Hakiki</span>
+            <span id="res_h_hakiki" class="font-mono text-emerald-300 font-medium">0° 0' 0"</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Tinggi Hilal Mar'i (Pusat)</span>
+            <span id="res_h_center" class="font-mono text-emerald-300 font-medium">0° 0' 0"</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Azimut Matahari</span>
+            <span id="res_az_sun" class="font-mono text-slate-200">0° 0' 0"</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Azimut Bulan</span>
+            <span id="res_az_moon" class="font-mono text-slate-200">0° 0' 0"</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Posisi Hilal</span>
+            <span id="res_pos_hilal" class="font-mono text-slate-200">0° 0' 0"</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Elongasi Toposentrik</span>
+            <span id="res_elong_topo" class="font-mono text-slate-200">0° 0' 0"</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Lama Hilal (Lag)</span>
+            <span id="res_lag" class="font-mono text-slate-200">0j 0m 0s</span>
+          </div>
+          <div class="bg-slate-900/60 p-3 rounded border border-slate-800 flex justify-between items-center">
+            <span class="text-slate-400">Umur Hilal</span>
+            <span id="res_age" class="font-mono text-slate-200">0j 0m 0s</span>
+          </div>
+        </div>
+
+        <div class="mt-4 p-4 rounded-lg bg-emerald-950/30 border border-emerald-500/20 text-xs text-slate-300 flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-emerald-400 shrink-0 mt-0.5"></i>
+          <div>
+            <span class="font-semibold text-emerald-300">Catatan Imkanur Rukyat:</span>
+            <p id="res_kriteria" class="mt-1">
+              Kriteria MABIMS baru mensyaratkan tinggi hilal mar'i minimal 3° dan elongasi minimal 6.4° agar hilal dapat teramati.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Helper functions for DMS & Decimal conversion
+    function parseDMS(str) {
+      if (!str) return 0;
+      const parts = str.trim().split(':').map(Number);
+      const sign = parts[0] < 0 || Object.is(parts[0], -0) ? -1 : 1;
+      const deg = Math.abs(parts[0] || 0);
+      const min = parts[1] || 0;
+      const sec = parts[2] || 0;
+      return sign * (deg + min / 60 + sec / 3600);
+    }
+
+    function formatDMS(val, isTime = false) {
+      const sign = val < 0 ? '-' : '';
+      let absVal = Math.abs(val);
+      let deg = Math.floor(absVal);
+      let minFull = (absVal - deg) * 60;
+      let min = Math.floor(minFull);
+      let sec = (minFull - min) * 60;
+
+      if (sec >= 59.995) {
+        sec = 0;
+        min += 1;
+      }
+      if (min >= 60) {
+        min = 0;
+        deg += 1;
+      }
+
+      const unit1 = isTime ? 'h' : '°';
+      const unit2 = isTime ? 'm' : "'";
+      const unit3 = isTime ? 's' : '"';
+
+      return `${sign}${deg}${unit1} ${String(min).padStart(2, '0')}${unit2} ${sec.toFixed(2).padStart(5, '0')}${unit3}`;
+    }
+
+    function degToRad(deg) { return deg * Math.PI / 180; }
+    function radToDeg(rad) { return rad * 180 / Math.PI; }
+
+    function calculateHisab() {
+      // 1. Inputs
+      const phi = parseDMS(`${document.getElementById('phi_deg').value}:${document.getElementById('phi_min').value}:${document.getElementById('phi_sec').value}`);
+      const lambda = parseDMS(`${document.getElementById('lambda_deg').value}:${document.getElementById('lambda_min').value}:${document.getElementById('lambda_sec').value}`);
+      const height = parseFloat(document.getElementById('height').value);
+      const timezone = parseFloat(document.getElementById('timezone').value);
+
+      const utBase = parseFloat(document.getElementById('ut_base').value);
+      const b1 = parseDMS(document.getElementById('b1_str').value);
+      const b2 = parseDMS(document.getElementById('b2_str').value);
+
+      // 2. Ijtima Calculation
+      const sb = b2 - b1;
+      const mb = b2 - b1; // MB = B2 - B1 (sesuai modul Kemenag)
+      const ijtimakPointHours = (b2 / sb); // Titik Ijtima dalam jam
+      const ijtimakUT = utBase + ijtimakPointHours;
+      const ijtimakWIB = ijtimakUT + timezone;
+
+      // 3. Dip & Ghurub Estimation
+      const dip = Math.sqrt(height) * 0.0293;
+      const decSun11 = parseDMS(document.getElementById('dec_sun_11').value);
+      const eSun11 = parseDMS(document.getElementById('e_sun_11').value);
+
+      const h_sun_approx = -(0.266667 + 0.575 + dip); // -(16' + 34'30" + Dip)
+      const cos_t = (-Math.tan(degToRad(phi)) * Math.tan(degToRad(decSun11))) + 
+                    (Math.sin(degToRad(h_sun_approx)) / (Math.cos(degToRad(phi)) * Math.cos(degToRad(decSun11))));
+      const t_deg = radToDeg(Math.acos(cos_t));
+      const t_hours = t_deg / 15;
+
+      const ghurubUT = 12 - eSun11 + t_hours - (lambda / 15);
+      const ghurubWIB = ghurubUT + timezone;
+
+      // Interpolation Fraction for Ghurub
+      const fractionGhurub = ghurubUT - utBase;
+
+      // 4. Interpolated Data at Sunset
+      const decSun12 = parseDMS(document.getElementById('dec_sun_12').value);
+      const decSunGhurub = decSun11 + (decSun12 - decSun11) * fractionGhurub;
+
+      const sdSun = parseDMS(document.getElementById('sd_sun_11').value);
+
+      const arSun11 = parseDMS(document.getElementById('ar_sun_11').value);
+      const arSun12 = parseDMS(document.getElementById('ar_sun_12').value);
+      const arSunGhurub = arSun11 + (arSun12 - arSun11) * fractionGhurub;
+
+      const arMoon11 = parseDMS(document.getElementById('ar_moon_11').value);
+      const arMoon12 = parseDMS(document.getElementById('ar_moon_12').value);
+      const arMoonGhurub = arMoon11 + (arMoon12 - arMoon11) * fractionGhurub;
+
+      const decMoon11 = parseDMS(document.getElementById('dec_moon_11').value);
+      const decMoon12 = parseDMS(document.getElementById('dec_moon_12').value);
+      const decMoonGhurub = decMoon11 + (decMoon12 - decMoon11) * fractionGhurub;
+
+      const sdMoon = parseDMS(document.getElementById('sd_moon_11').value);
+      const hpMoon = parseDMS(document.getElementById('hp_moon_11').value);
+
+      // 5. Sun & Moon Hour Angle
+      const h0 = -(sdSun + 0.575 + dip);
+      const cos_t0 = (-Math.tan(degToRad(phi)) * Math.tan(degToRad(decSunGhurub))) + 
+                     (Math.sin(degToRad(h0)) / (Math.cos(degToRad(phi)) * Math.cos(degToRad(decSunGhurub))));
+      const t0 = radToDeg(Math.acos(cos_t0));
+
+      const tMoon = arSunGhurub - arMoonGhurub + t0;
+
+      // 6. Moon Altitude (Tinggi Hilal)
+      const sin_h = (Math.sin(degToRad(phi)) * Math.sin(degToRad(decMoonGhurub))) + 
+                    (Math.cos(degToRad(phi)) * Math.cos(degToRad(decMoonGhurub)) * Math.cos(degToRad(tMoon)));
+      const hHakiki = radToDeg(Math.asin(sin_h));
+
+      const parallax = Math.cos(degToRad(hHakiki)) * hpMoon;
+      const hC0 = hHakiki - parallax + sdMoon;
+
+      let refr = 0.575; // Default 0°34'30" jika hC0 < 0
+      if (hC0 >= 0) {
+        refr = 0.01695 / Math.tan(degToRad(hC0 + 10.3 / (hC0 + 5.1255)));
+      }
+
+      const hMarUpper = hC0 + refr + dip;
+      const hMarCenter = hMarUpper - sdMoon;
+
+      // 7. Azimuths
+      const tan_A0 = -Math.sin(degToRad(phi)) / Math.tan(degToRad(t0)) + 
+                     (Math.cos(degToRad(phi)) * Math.tan(degToRad(decSunGhurub))) / Math.sin(degToRad(t0));
+      const A0 = radToDeg(Math.atan(tan_A0));
+      const azSun = 270 + A0;
+
+      const tan_A = -Math.sin(degToRad(phi)) / Math.tan(degToRad(tMoon)) + 
+                    (Math.cos(degToRad(phi)) * Math.tan(degToRad(decMoonGhurub))) / Math.sin(degToRad(tMoon));
+      const A = radToDeg(Math.atan(tan_A));
+      const azMoon = 270 + A;
+
+      const posHilal = azMoon - azSun;
+
+      // 8. Elongation & Age
+      const cos_JBt = Math.cos(degToRad(hMarCenter + sdSun + refr)) * Math.cos(degToRad(posHilal));
+      const elongTopo = radToDeg(Math.acos(cos_JBt));
+
+      const ageHours = ghurubWIB - ijtimakWIB;
+
+      // 9. Display Results
+      document.getElementById('res_ijtimak').innerText = formatDMS(ijtimakWIB, true) + ' WIB';
+      document.getElementById('res_ghurub').innerText = formatDMS(ghurubWIB, true) + ' WIB';
+      document.getElementById('res_h_hakiki').innerText = formatDMS(hHakiki);
+      document.getElementById('res_h_center').innerText = formatDMS(hMarCenter);
+      document.getElementById('res_az_sun').innerText = formatDMS(azSun);
+      document.getElementById('res_az_moon').innerText = formatDMS(azMoon);
+      document.getElementById('res_pos_hilal').innerText = formatDMS(posHilal) + (posHilal < 0 ? ' (Selatan ☉)' : ' (Utara ☉)');
+      document.getElementById('res_elong_topo').innerText = formatDMS(elongTopo);
+      document.getElementById('res_lag').innerText = formatDMS((tMoon - t0) / 15, true);
+      document.getElementById('res_age').innerText = `${Math.floor(ageHours)}j ${Math.floor((ageHours % 1) * 60)}m`;
+
+      // Kriteria Check
+      const kriteriaEl = document.getElementById('res_kriteria');
+      if (hMarCenter >= 3 && elongTopo >= 6.4) {
+        kriteriaEl.innerHTML = `<span class="font-bold text-emerald-400">MEMENUHI KRITERIA MABIMS BARU.</span> Hilal kemungkinan besar dapat teramati (Tinggi: ${formatDMS(hMarCenter)}, Elongasi: ${formatDMS(elongTopo)}).`;
+      } else {
+        kriteriaEl.innerHTML = `<span class="font-bold text-rose-400">BELUM MEMENUHI KRITERIA MABIMS BARU.</span> Hilal sangat sulit/tidak mungkin teramati (Tinggi: ${formatDMS(hMarCenter)}, Elongasi: ${formatDMS(elongTopo)}). Minimum kriteria: Tinggi 3°, Elongasi 6.4°.`;
+      }
+    }
+
+    // Run initial calculation on page load
+    window.onload = calculateHisab;
+  </script>
+</body>
+</html>
